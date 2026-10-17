@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.worm</groupId>
+    <artifactId>api-version-spring-boot-starter</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>api-version-spring-boot-starter</name>
+    <description>Spring Boot 2 API 版本控制 Starter：@ApiVersion 注解 + 自定义 HandlerMapping，支持请求头/路径两种版本传递方式，多版本接口共存</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- 为什么：本开源版本面向 JDK 8 基线（Spring Boot 2.7 / Spring 5.3 / javax 命名空间） —— 干什么：编译源码级别与字节码目标均为 Java 8 -->
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <spring-boot.version>2.7.18</spring-boot.version>
+        <!-- 为什么：Lombok 1.18.30 发布于 JDK 21 之前，在 JDK 21 的 javac 下注解处理器静默失效；1.18.34 起官方支持 JDK 8~21 全基线 —— 干什么：固定 lombok 版本保证 JDK 8 与 JDK 21 下注解处理均生效 -->
+        <lombok.version>1.18.34</lombok.version>
+        <!-- 为什么：Boot 2.7 的 Web 容器（tomcat-embed）提供 javax.servlet-api，编译期需要、运行期由容器提供 —— 干什么：provided 作用域引入 -->
+        <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 为什么：本项目独立发布，不依赖内部 BOM，直接导入 Spring Boot 官方 BOM 统一管理 spring-webmvc / starter-test 等版本 —— 干什么：以 import 方式引入 spring-boot-dependencies -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- javax.servlet：Boot 2.7 基线（Boot 3+ 为 jakarta.servlet），运行期由 Web 容器提供 -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax.servlet-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <parameters>true</parameters>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
